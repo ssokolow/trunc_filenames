@@ -12,17 +12,17 @@ use walkdir::WalkDir;
 
 /// Command-line argument schema
 #[derive(Debug, Parser)]
-#[command(version, about, long_about = None)]
+#[clap(version, about, long_about = None)]
 struct CliArgs {
     /// Paths to rename (recursively, if directories)
     path: Vec<PathBuf>,
 
     /// Length to truncate to. (Defaults to something suitable for rclone filename encryption)
-    #[arg(long, default_value_t = 140)]
+    #[clap(long, default_value_t = 140)]
     max_len: usize,
 
     /// Don't actually rename files. Just print.
-    #[arg(short = 'n', long, default_value_t = false)]
+    #[clap(short = 'n', long, default_value_t = false)]
     dry_run: bool,
 }
 
