@@ -42,11 +42,13 @@ fn trunc_path<'a>(path: &'a Path, max_len: usize) -> Result<Cow<'a, Path>, Box<d
 
     // Just return if it's already short enough
     let raw_trunc = if let Some(trunc) = raw.get(..max_len) {
+        if raw.len() < max_len {
+            return Ok(Cow::from(path));
+        }
         trunc
     } else {
         return Ok(Cow::from(path));
     };
-    debug_assert!(raw.len() > max_len);
 
     let new_fname_len = if let Ok(_) = std::str::from_utf8(raw) {
         // if it's UTF-8-able, then truncate and let the UTF-8 parser figure out where to split
