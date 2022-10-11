@@ -1,0 +1,8 @@
+# Version 0.1-stable
+
+# Apply something acceptably close to what I habitually use, so I can consider
+# it acceptable to enable format-on-save.
+match_block_trailing_comma = true
+use_field_init_shorthand = true
+use_small_heuristics = "Max"
+use_try_shorthand = true
