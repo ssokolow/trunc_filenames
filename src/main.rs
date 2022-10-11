@@ -17,7 +17,7 @@ struct CliArgs {
     /// Paths to rename (recursively, if directories)
     path: Vec<PathBuf>,
 
-    /// Length to truncate to. (Defaults to something suitable for rclone filename encryption)
+    /// Length to truncate to. (Default chosen for rclone name encryption)
     #[clap(long, default_value_t = 140)]
     max_len: usize,
 
