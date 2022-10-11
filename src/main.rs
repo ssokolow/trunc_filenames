@@ -22,7 +22,7 @@ struct CliArgs {
     max_len: usize,
 
     /// Don't actually rename files. Just print.
-    #[clap(short = 'n', long, default_value_t = false)]
+    #[clap(short = 'n', long, action, default_value_t = false)]
     dry_run: bool,
 }
 
