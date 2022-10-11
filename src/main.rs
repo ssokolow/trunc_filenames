@@ -2,6 +2,7 @@
 //!
 //! **WARNING:** Will not preserve secondary extensions like `.tar.gz`
 
+use std::borrow::Cow;
 use std::error::Error;
 use std::ffi::OsStr;
 use std::os::unix::ffi::OsStrExt;
@@ -29,10 +30,10 @@ struct CliArgs {
 /// Figure out the new name when truncating a path
 ///
 /// **NOTE:** Handling of non-UTF8-able path is currently hacky
-fn trunc_path(path: &Path, max_len: usize) -> Result<&Path, Box<dyn Error>> {
+fn trunc_path<'a>(path: &'a Path, max_len: usize) -> Result<Cow<'a, Path>, Box<dyn Error>> {
     let fname = match path.file_name() {
         Some(os_str) => os_str,
-        None => return Ok(path),
+        None => return Ok(Cow::from(path)),
     };
 
     // POSIX-specific but semantically correct. If I ever port this to Windows, I'll need to figure
@@ -43,7 +44,7 @@ fn trunc_path(path: &Path, max_len: usize) -> Result<&Path, Box<dyn Error>> {
     let raw_trunc = if let Some(trunc) = raw.get(..max_len) {
         trunc
     } else {
-        return Ok(path);
+        return Ok(Cow::from(path));
     };
     debug_assert!(raw.len() > max_len);
 
@@ -61,9 +62,18 @@ fn trunc_path(path: &Path, max_len: usize) -> Result<&Path, Box<dyn Error>> {
     };
 
     let path_raw = path.as_os_str().as_bytes();
-    let new_len = path_raw.len() - (raw.len() - new_fname_len);
+    let mut new_len = path_raw.len() - (raw.len() - new_fname_len);
+    if let Some(ext) = path.extension() {
+        new_len = new_len.saturating_sub(ext.len()).saturating_sub(1); // for the dot
+    }
+
     let new_result = path.as_os_str().as_bytes().get(..new_len).expect("truncate within len");
-    Ok(Path::new(OsStr::from_bytes(new_result)))
+
+    let mut new_path = PathBuf::from(OsStr::from_bytes(new_result));
+    if let Some(ext) = path.extension() {
+        new_path.set_extension(ext);
+    }
+    Ok(Cow::from(new_path))
 }
 
 /// Rename a file/directory name to truncate it
