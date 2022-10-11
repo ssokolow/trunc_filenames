@@ -73,7 +73,7 @@ fn rename_path(path: &Path, max_len: usize, dry_run: bool) -> Result<(), Box<dyn
         return Ok(());
     }
 
-    print!(
+    println!(
         "Truncating name: {:?} → {:?}",
         path.file_name().unwrap_or(&OsStr::new("")),
         new_path.file_name().unwrap_or(&OsStr::new(""))
