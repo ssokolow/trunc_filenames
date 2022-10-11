@@ -12,7 +12,7 @@ use walkdir::WalkDir;
 
 /// Command-line argument schema
 #[derive(Debug, Parser)]
-#[clap(version, about, long_about = None)]
+#[clap(version, about = "Rename files and directories to fit length limits.\n\nWARNING: Will not preserve secondary extensions like .tar.gz", long_about = None)]
 struct CliArgs {
     /// Paths to rename (recursively, if directories)
     path: Vec<PathBuf>,
