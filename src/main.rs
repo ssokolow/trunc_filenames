@@ -30,7 +30,7 @@ struct CliArgs {
 /// Figure out the new name when truncating a path
 ///
 /// **NOTE:** Handling of non-UTF8-able path is currently hacky
-fn trunc_path<'a>(path: &'a Path, max_len: usize) -> Result<Cow<'a, Path>, Box<dyn Error>> {
+fn trunc_path(path: &Path, max_len: usize) -> Result<Cow<'_, Path>, Box<dyn Error>> {
     let fname = match path.file_name() {
         Some(os_str) => os_str,
         None => return Ok(Cow::from(path)),
@@ -50,7 +50,7 @@ fn trunc_path<'a>(path: &'a Path, max_len: usize) -> Result<Cow<'a, Path>, Box<d
         return Ok(Cow::from(path));
     };
 
-    let new_fname_len = if let Ok(_) = std::str::from_utf8(raw) {
+    let new_fname_len = if std::str::from_utf8(raw).is_ok() {
         // if it's UTF-8-able, then truncate and let the UTF-8 parser figure out where to split
         match std::str::from_utf8(raw_trunc) {
             Ok(_) => raw_trunc.len(),
@@ -87,8 +87,8 @@ fn rename_path(path: &Path, max_len: usize, dry_run: bool) -> Result<(), Box<dyn
 
     println!(
         "Truncating name: {:?} → {:?}",
-        path.file_name().unwrap_or(&OsStr::new("")),
-        new_path.file_name().unwrap_or(&OsStr::new(""))
+        path.file_name().unwrap_or_else(|| OsStr::new("")),
+        new_path.file_name().unwrap_or_else(|| OsStr::new(""))
     );
     if !dry_run {
         std::fs::rename(path, new_path)?;
