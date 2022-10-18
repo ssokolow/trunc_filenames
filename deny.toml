@@ -1,0 +1,29 @@
+# I'm only targeting Linux currently, and this project is only COMPATIBLE with
+# POSIX targets due to the dependency on `/usr/bin/br`, so silence warnings
+# about transitive dependencies specific to other targets.
+targets = [
+    { triple = "i686-unknown-linux-gnu" },
+    { triple = "i686-unknown-linux-musl" },
+    { triple = "x86_64-unknown-linux-gnu" },
+    { triple = "x86_64-unknown-linux-musl" },
+]
+
+[advisories]
+vulnerability = "deny"
+unmaintained = "warn"
+yanked = "warn"
+notice = "warn"
+
+[licenses]
+unlicensed = "deny"
+allow = [
+    # See https://spdx.org/licenses/ for list of possible licenses
+    # [possible values: any SPDX 3.11 short identifier (+ optional exception)].
+    "MIT",
+    "Apache-2.0",
+    "Unicode-DFS-2016",
+]
+
+[bans]
+multiple-versions = "allow"
+wildcards = "deny"
