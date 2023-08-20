@@ -27,3 +27,6 @@ allow = [
 [bans]
 multiple-versions = "allow"
 wildcards = "deny"
+deny = [
+    { name = "serde_derive", version = ">=1.0.172" }
+]
