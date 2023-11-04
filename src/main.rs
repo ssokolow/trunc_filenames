@@ -8,22 +8,33 @@ use std::ffi::OsStr;
 use std::os::unix::ffi::OsStrExt;
 use std::path::{Path, PathBuf};
 
-use clap::Parser;
+use clap::{
+    builder::styling::{AnsiColor, Styles},
+    Parser,
+};
 use walkdir::WalkDir;
+
+fn styles() -> Styles {
+    Styles::styled()
+        .header(AnsiColor::Yellow.on_default())
+        .usage(AnsiColor::Yellow.on_default())
+        .literal(AnsiColor::Green.on_default())
+        .placeholder(AnsiColor::Green.on_default())
+}
 
 /// Command-line argument schema
 #[derive(Debug, Parser)]
-#[clap(version, about = "Rename files and directories to fit length limits.\n\nWARNING: Will not preserve secondary extensions like .tar.gz", long_about = None)]
+#[command(version, about = "Rename files and directories to fit length limits.\n\nWARNING: Will not preserve secondary extensions like .tar.gz", long_about = None, styles = styles())]
 struct CliArgs {
     /// Paths to rename (recursively, if directories)
     path: Vec<PathBuf>,
 
     /// Length to truncate to. (Default chosen for rclone name encryption)
-    #[clap(long, default_value_t = 140)]
+    #[arg(long, default_value_t = 140)]
     max_len: usize,
 
     /// Don't actually rename files. Just print.
-    #[clap(short = 'n', long, action, default_value_t = false)]
+    #[arg(short = 'n', long, action, default_value_t = false)]
     dry_run: bool,
 }
 
